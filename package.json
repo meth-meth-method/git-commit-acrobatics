@@ -3,5 +3,12 @@
   "description": "A file transfer app requiring the sender to authorize every download.",
   "version": "0.0.0",
   "author": "Meth Meth Method",
-  "license": "UNLICENCE"
+  "license": "UNLICENCE",
+  "scripts": {
+    "test": "mocha './src/**/*-test.js'"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "connect-busboy": "0.0.2"
+  }
 }
