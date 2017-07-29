@@ -1,0 +1,7 @@
+{
+  "name": "transfer-tango",
+  "description": "A file transfer app requiring the sender to authorize every download.",
+  "version": "0.0.0",
+  "author": "Meth Meth Method",
+  "license": "UNLICENCE"
+}
