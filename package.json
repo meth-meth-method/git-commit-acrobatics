@@ -5,6 +5,7 @@
   "author": "Meth Meth Method",
   "license": "UNLICENCE",
   "scripts": {
+    "lint": "eslint ./src",
     "test": "mocha './src/**/*-test.js'"
   },
   "dependencies": {
