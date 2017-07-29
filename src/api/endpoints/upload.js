@@ -13,7 +13,10 @@ module.exports = function upload(storage) {
 
     req.busboy.on('file', (fieldname, file, name, encoding, mime) => {
 
-      storage.store(file, {name, mime})
+      storage.store(file, {
+        name,
+        mime,
+      })
       .then(receipt => {
         const response = {
           id: receipt.id,
