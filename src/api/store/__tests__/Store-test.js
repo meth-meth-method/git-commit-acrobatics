@@ -46,22 +46,14 @@ describe('Store', () => {
   describe('when storing stream', () => {
     let storePromise;
 
-    beforeEach(done => {
-      // Start writing file.
+    beforeEach(() => {
       const file = fs.createReadStream(path.join(__dirname, 'fixtures', 'photo.jpg'));
       storePromise = store.store(file, {
         mime: 'image/jpg',
         filename: 'other_filename.png',
       });
 
-      storePromise.then(receipt => {
-        receipt.streams.meta.then(stream => {
-          stream.on('finish', () => {
-            // Done writing file.
-            done();
-          });
-        });
-      });
+      return storePromise;
     });
 
     it('returns a Promise', () => {
@@ -88,10 +80,6 @@ describe('Store', () => {
 
         it('contains secret', () => {
           expect(receipt.secret.length).to.be(64);
-        });
-
-        it('contains streams', () => {
-          expect(receipt.streams).to.be.ok();
         });
 
         describe('when used to retreive file', () => {

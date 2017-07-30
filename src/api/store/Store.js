@@ -63,36 +63,24 @@ class Store
     const secret = this.createSecret();
 
     return new Promise(resolve => {
-      const blobStream = new Promise(resolve => {
-        const stream = this.storeStream(file, id, secret);
-        resolve(stream);
+      let size = 0;
+
+      file.on('data', buff => {
+        size += buff.length;
       });
 
-      const metaStream = new Promise(resolve => {
-        let size = 0;
-        file.on('data', data => {
-          size += data.length;
+      file.on('end', () => {
+        meta.size = size;
+        const stream = this.putMeta(meta, id, secret);
+        stream.on('finish', () => {
+          resolve({
+            id,
+            secret,
+          });
         });
-        file.on('end', () => {
-          meta.size = size;
-          const stream = this.putMeta(meta, id, secret);
-          resolve(stream);
-        });
       });
 
-      const streams = [
-        blobStream,
-        metaStream,
-      ];
-
-      streams.blob = blobStream;
-      streams.meta = metaStream;
-
-      resolve({
-        id,
-        secret,
-        streams,
-      });
+      this.storeStream(file, id, secret);
     });
   }
 
