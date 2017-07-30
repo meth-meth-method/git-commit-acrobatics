@@ -64,6 +64,20 @@ describe('Download endpoint', () => {
       expect(test.response.body.toString()).to.be('fake body data');
     });
 
+    describe('Headers', () => {
+      it('Content-Length set', () => {
+        expect(test.response.header['content-length']).to.be('123412');
+      });
+
+      it('Content-Type set', () => {
+        expect(test.response.header['content-type']).to.be('image/jpeg');
+      });
+
+      it('Content-Disposition set', () => {
+        expect(test.response.header['content-disposition']).to.be('attachment; filename="foobar.jpg"');
+      });
+    });
+
     it('calls store method on storage', () => {
       expect(mockStorage.retrieve.callCount).to.be(1);
     });
