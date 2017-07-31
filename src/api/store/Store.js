@@ -62,7 +62,7 @@ class Store
     const id = this.createId();
     const secret = this.createSecret();
 
-    return new Promise(resolve => {
+    const metaStream = new Promise(resolve => {
       let size = 0;
 
       file.on('data', buff => {
@@ -72,15 +72,20 @@ class Store
       file.on('end', () => {
         meta.size = size;
         const stream = this.putMeta(meta, id, secret);
-        stream.on('finish', () => {
-          resolve({
-            id,
-            secret,
-          });
-        });
+        stream.on('finish', resolve);
       });
+    });
 
-      this.storeStream(file, id, secret);
+    const blobStream = new Promise(resolve => {
+      this.storeStream(file, id, secret).on('finish', resolve);
+    });
+
+    return Promise.all([metaStream, blobStream])
+    .then(() => {
+      return {
+        id,
+        secret,
+      };
     });
   }
 
