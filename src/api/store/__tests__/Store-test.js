@@ -13,22 +13,20 @@ function FakeAdapter() {
 
   this.getStream = sinon.spy(name => {
     const stream = new Readable();
-    const data = this.files.get(name);
-    stream.push(data);
+    this.files.get(name).forEach(chunk => {
+      stream.push(chunk);
+    });
     stream.push(null);
     return stream;
   });
 
   this.putStream = sinon.spy((name, stream) => {
     const output = new Writable();
-    const buffers = [];
-    sinon.stub(output, '_write').callsFake(data => {
-      buffers.push(data);
-    });
-    sinon.stub(output, 'end').callsFake((...args) => {
-      this.files.set(name, Buffer.concat(buffers));
-      Reflect.apply(output.end.wrappedMethod, output, args);
-      setTimeout(() => output.emit('finish'));
+    const chunks = [];
+    this.files.set(name, chunks);
+    sinon.stub(output, '_write').callsFake((chunk, encoding, next) => {
+      chunks.push(chunk);
+      next();
     });
     return stream.pipe(output);
   });
