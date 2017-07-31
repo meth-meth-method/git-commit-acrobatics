@@ -21,13 +21,13 @@ function FakeAdapter() {
   });
 
   this.putStream = sinon.spy((name, stream) => {
-    const output = new Writable();
     const chunks = [];
     this.files.set(name, chunks);
-    sinon.stub(output, '_write').callsFake((chunk, encoding, next) => {
+    const output = new Writable();
+    output._write = (chunk, encoding, next) => {
       chunks.push(chunk);
       next();
-    });
+    };
     return stream.pipe(output);
   });
 }
@@ -61,8 +61,13 @@ describe('Store', () => {
     });
 
     it('stores meta data encrypted', () => {
-      expect(adapter.files.get('Aa12xea2.meta').toString('hex'))
+      expect(Buffer.concat(adapter.files.get('Aa12xea2.meta')).toString('hex'))
       .to.be('1953b238db9498f23cd5484e584a90316e3f4f534897b0d28ba8188c12c4b579a8d1a70eda1f00186809e0ff7bbe030d81876ca2795d7015b9eb928da30df77c80');
+    });
+
+    it('stores blob data encrypted', () => {
+      expect(adapter.files.get('Aa12xea2')[0].slice(0, 64).toString('hex'))
+      .to.be('9da920b1b6e1f08e57fa252e3d2fbf5a1e596d7f951cd922beae16951895e734b785fc4598405e334d218a9a16db2d7def60528c3c2e0d5cacab91e7f063a31a');
     });
 
     describe('when resolved', () => {
@@ -133,7 +138,7 @@ describe('Store', () => {
 
             it('contains stream with expected data', () => {
               return hash(result.stream, 'sha1').then(digest => {
-                expect(digest).to.be('da39a3ee5e6b4b0d3255bfef95601890afd80709');
+                expect(digest).to.be('e0ca7fef3e168d51dc34403dd34b7613c3cc80c2');
               });
             });
           });
