@@ -62,9 +62,27 @@ describe('App', () => {
             expect(test.response.status).to.be(200);
           });
 
-          it('body contains data', () => {
-            console.log(test.response)
-            expect(test.response.body).to.be.a(Buffer);
+          describe('Headers', () => {
+            it('Content-Length set', () => {
+              expect(test.response.header['content-length']).to.be('32489');
+            });
+
+            it('Content-Type set', () => {
+              expect(test.response.header['content-type']).to.be('image/jpeg');
+            });
+
+            it('Content-Disposition set', () => {
+              expect(test.response.header['content-disposition'])
+              .to.be('attachment; filename="photo.jpg"');
+            });
+          });
+
+          it('body contains expected data', () => {
+            const body = test.response.body;
+            expect(body).to.be.a(Buffer);
+            expect(body.length).to.be(32489);
+            expect(body.slice(0, 20).toString('hex')).to.be('ffd8ffe000104a46494600010200000100010000');
+            expect(body.slice(32469, 32489).toString('hex')).to.be('0ded5a9fb8ad350cc3bc7f519ec8380fd54fffd9');
           });
         });
       });
