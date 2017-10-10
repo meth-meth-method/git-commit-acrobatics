@@ -5,15 +5,15 @@ const {createAPI} = require('./api');
 const {createStore} = require('./store');
 
 function createApp(config) {
-  const store = createStore(config.store);
-  const api = createAPI(store);
-  const app = express();
+	const store = createStore(config.store);
+	const api = createAPI(store);
+	const app = express();
 
-  app.use('/v1', api);
+	app.use('/v1', api);
 
-  return app;
+	return app;
 }
 
 module.exports = {
-  createApp,
+	createApp,
 };
